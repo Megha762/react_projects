@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css?family=Copse" rel="stylesheet');
+@import url('https://fonts.googleapis.com/css?family=Luckiest+Guy');
+
+
+Header {
+    background: linear-gradient(to right,  #000, #8B78E6);
+    color: #fff;
+    height: 180px;
+    
+}
+h1{
+    vertical-align: middle;
+    font-family: 'Copse', serif;
+    font-weight: bolder;
+    font-size: 50px;
+}
+img{
+    margin-top: auto;
+    margin-bottom: auto; 
+    display: block;
+    height: 7rem;
+    width: 7rem;
+}
+input[type ='text']{
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    border-radius: 5px;
+    border: none;
+    border-bottom: 2px solid #777E8B;
+    padding:5px;
+}
+
+
+button{
+    font-family: 'Copse', serif;
+    border:none;
+    border-radius: 5px;
+    padding: 0.2rem 5rem ;
+    background: #8B78E6;
+    box-shadow: 1px 2px 3px 4px #EAF0F1;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+.memeImg{
+    height: 300px;
+    width: 300px;
+    border-radius: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    position: relative;
+    box-shadow: 5px 5px 5px 5px rgba(224, 229, 230, 0.74);
+
+}
+.toptext{
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-family: 'Luckiest Guy', cursive;
+    color: #fff;
+    -webkit-text-stroke: 2px black;
+    outline: none;
+}
+.bottomtext{
+    position: absolute;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-family: 'Luckiest Guy', cursive;
+    color: #fff;
+    -webkit-text-stroke: 2px black;
+    outline: none;
+}
