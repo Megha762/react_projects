@@ -1,0 +1,19 @@
+import React, { Component } from "react"
+
+export default class MessageList extends Component{
+  render(){
+    return(
+      <div>
+        <ul className="message-list">
+          {this.props.messages.map((message, index)=>(
+            <li key={index}>
+              <h4 className="message-sender">{message.senderId}</h4>
+              <p className="message-text">{message.text}</p>
+            </li>
+          ))}
+          <li></li>
+        </ul>
+      </div>
+    )
+  }
+}
