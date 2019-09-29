@@ -2,16 +2,24 @@ import React, {Component} from "react"
 import { ChatManager, TokenProvider } from '@pusher/chatkit-client'
 import Input from "./Input"
 import MessageList from "./MessageList"
-
+import Status from "./Status"
+import RoomList from './RoomList'
+import AddRoom from './AddRoom'
 
 export default class ChatApp extends Component{
   constructor(props){
     super(props)
     this.state={
+      roomId: '19554261',
       currentUser: null,
       currentRoom: {users:[]},
       messages: [],
       users: [],
+      status: null,
+      height: '50px',
+      joinableRooms: [],
+      joinedRooms: [],
+
     }
     this.addMessage = this.addMessage.bind(this)
   }
@@ -27,26 +35,68 @@ export default class ChatApp extends Component{
     chatManager
       .connect()
       .then(currentUser=>{
-        this.setState({currentUser})
-        return currentUser.subscribeToRoom({
-          roomId: '19554261',
-          messageLimit: 100,
-          hooks: {
-            onMessage: message=>{
-              this.setState({
-                  messages: [...this.state.messages, message]
-              })
-            }
-          }
+          this.setState({currentUser})
+          
+          this.getRooms();
+
+          this.subscribeToRoom(this.state.roomId);
+          
+      })
+      .catch(error=>console.log('chatkit connecting error', error))
+  }
+
+
+  getRooms = () => {
+      this.state.currentUser.getJoinableRooms()
+      .then(joinableRooms => {
+        // do something with the rooms
+        this.setState({
+          joinableRooms,
+          joinedRooms: this.state.currentUser.rooms
         })
+      })
+      .catch(err => {
+        console.log(`Error getting joinable rooms: ${err}`)
+      })
+  }
+  
+  componentDidUpdate() {
+    
+  }
+
+  subscribeToRoom = (roomId) => {
+      this.setState({ 
+        messages: [],
+        roomId,
+      })
+      return this.state.currentUser.subscribeToRoom({
+        roomId,
+        messageLimit: 100,
+        hooks: {
+          onMessage: message=>{
+            this.setState({
+                messages: [...this.state.messages, message]
+            })
+          }
+        }
       })
       .then(currentRoom=>{
         this.setState({
           currentRoom,
           users: currentRoom.userIds
         })
+        this.getRooms()
+        return currentRoom.userStore.presenceStore
       })
-      .catch(error=>console.log(error))
+      .then(data => {
+        setTimeout(() => {
+          this.setState({
+            status: Object.entries(data),
+          })
+        }, 5000)
+        
+      })
+      .catch(error=>console.log("subscribe error", error))
   }
 
   addMessage(text){
@@ -56,12 +106,54 @@ export default class ChatApp extends Component{
     })
     .catch(error=>console.error('error',error))
   }
+
+  createRoom = (name) => {
+    this.state.currentUser.createRoom({
+      name
+    })
+    .then(room => 
+      this.subscribeToRoom(room.id)
+    )
+    .catch(err => console.log("new room error", err))
+  }
+ 
   render(){
     return(
-      <div>
-        <h2 className="header">Hi There, Ask us anything</h2>
-        <MessageList messages={this.state.messages}/>
-        <Input className="input-field" onSubmit={this.addMessage}/>
+      <div className="chat-box">
+
+          <div className="side-body">
+
+            <div className="room-body">
+              <div  className="room-list" id="room-list-id">
+                {this.state.joinableRooms && this.state.joinedRooms  === [] ? 
+                  <h5 className="load">LOADING</h5> : 
+                  <RoomList 
+                    roomId = {this.state.roomId}
+                    subscribeToRoom = {this.subscribeToRoom}
+                    rooms = {[...this.state.joinableRooms, ...this.state.joinedRooms]}
+                  />
+                }
+              </div>
+              <AddRoom createRoom = {this.createRoom}/>
+            </div>
+          
+            <div className="status">
+              {this.state.status === null ? <h5 className="load">LOADING</h5> : <Status status = {this.state.status}/>}
+            </div>
+
+          </div>
+
+          <div className="message-box">
+
+            <div className="message-body">
+              {this.state.messages === null ? <h5 className="load">{console.log('load')}LOADING</h5> : <MessageList messages={this.state.messages}/>}
+            </div>
+
+            <div className="text">
+              <Input onSubmit={this.addMessage}/>
+            </div>
+          </div>
+        
       </div>
     )
   }

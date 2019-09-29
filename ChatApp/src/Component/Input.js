@@ -27,8 +27,7 @@ export default class Input extends Component{
     return(
       <div>
         <form onSubmit={this.handleSubmit} className="input-field">
-          <input className="message-input" type="text" value={this.state.message} onChange={this.handleChange}/>
-          <input className="message-submit" type="submit" value="send"/>
+          <input className="message-input" type="text" value={this.state.message} onChange={this.handleChange} placeholder="Write Something && HIT ENTER"/>
         </form>
       </div>
     )
